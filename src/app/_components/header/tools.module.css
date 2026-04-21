@@ -1,0 +1,6 @@
+/* src/app/_components/header/tools.module.css */
+@reference "#tailwind.css";
+
+.tools {
+    @apply flex gap-4 justify-end items-center;
+}

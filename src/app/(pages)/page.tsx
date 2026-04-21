@@ -30,7 +30,7 @@ const HomePage: FC<{ searchParams: Promise<IPaginateQueryProps> }> = async ({ se
 
     return (
         <div className="page-item">
-            <Tools className="page-container" />
+            {/* <Tools className="page-container" /> */}
             <div className={cn('page-container', $styles.list)}>
                 {items.map((item) => (
                     <div
