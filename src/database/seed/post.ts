@@ -1,12 +1,11 @@
-// src/database/seed/post.ts
-import { getRandomInt } from "@/libs/random";
+import { faker } from '@/libs/db/utils';
+import { getRandomInt } from '@/libs/random';
 
-import { prisma } from "../client";
-import { faker } from "../../libs/db/utils";
+import { prisma } from '../client';
 
 export const createPostData = async () => {
-  // 为避免重复添加数据，在重新运行数据填充时，清空已有文章数据
-  await prisma.post.deleteMany();
+    // 为避免重复添加数据，在重新运行数据填充时，清空已有文章数据
+    await prisma.post.$truncate();
     for (let index = 0; index < 22; index++) {
         await prisma.post.create({
             select: { id: true },

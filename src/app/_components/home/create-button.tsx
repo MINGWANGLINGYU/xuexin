@@ -18,7 +18,7 @@ export const Button: FC = () => {
         return isNil(query) || query.length < 1 ? '' : `?${query}`;
     }, [searchParams]);
     return (
-        <CNButton asChild className="ml-auto justify-end rounded-sm" variant="outline">
+        <CNButton asChild className="ml-auto justify-end rounded-sm">
             <Link href={`/posts/create${getUrlQuery}`}>
                 <Plus />
                 创建

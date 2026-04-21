@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation';
 import { Tools } from '@/app/_components/home/tools';
 import { cn } from '@/app/_components/shadcn/utils';
 import { queryPostItem } from '@/app/actions/post';
+import { formatChineseTime } from '@/libs/time';
 
 import $styles from './page.module.css';
 
@@ -35,12 +36,14 @@ const PostItemPage: FC<{ params: Promise<{ item: string }> }> = async ({ params 
                         <h1>{post.title}</h1>
                     </header>
                     <div className={$styles.meta}>
-                        <div>
-                            <span>
-                                <Calendar />
-                            </span>
-                            <time className="ellips">2024年8月10日</time>
-                        </div>
+                        <span>
+                            <Calendar />
+                        </span>
+                        <time className="ellips">
+                            {!isNil(post.updatedAt)
+                                ? formatChineseTime(post.updatedAt)
+                                : formatChineseTime(post.createdAt)}
+                        </time>
                     </div>
                     <div className={$styles.body}>{post.body}</div>
                 </div>
