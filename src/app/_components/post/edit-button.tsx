@@ -18,7 +18,7 @@ const Button: FC<{ id: string }> = ({ id }) => {
     }, [searchParams]);
     return (
         <CNButton asChild className="mr-3">
-            <Link href={`/post-edit/${id}${getUrlQuery}`}>
+            <Link href={`/posts/edit/${id}${getUrlQuery}`}>
                 <UserPen />
                 编辑
             </Link>

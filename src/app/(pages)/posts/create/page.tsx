@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 
+import { PostPageForm } from '@/app/_components/post/page-form';
 import { cn } from '@/app/_components/shadcn/utils';
 
-import { PostCreateForm } from './form';
 import $styles from './style.module.css';
 
 // 添加动态标记，强制使用 SSR
@@ -13,7 +13,7 @@ const PostCreatePage: FC = async () => {
     return (
         <div className="page-item">
             <div className={cn($styles.item, 'page-container')}>
-                <PostCreateForm />
+                <PostPageForm />
             </div>
         </div>
     );
