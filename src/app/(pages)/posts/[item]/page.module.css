@@ -12,7 +12,7 @@
     }
 
     & > .content {
-        @apply p-3 flex flex-col;
+        @apply p-3 flex flex-col flex-auto;
 
         & > .title {
             @apply my-2;
