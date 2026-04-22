@@ -1,15 +1,17 @@
-// src/app/_components/post/page-form.tsx
 'use client';
 
-import { Post } from "@prisma/client";
-import { Button } from "antd";
-import { isNil } from "lodash";
-import { Save } from "lucide-react";
-import { FC, useRef, useState, useCallback, MouseEventHandler } from "react";
-import { PostActionForm } from "./action-form";
-import { PostActionFormRef } from "./types";
+import type { Post } from '@prisma/client';
+import type { FC, MouseEventHandler } from 'react';
 
-// ...
+import { isNil } from 'lodash';
+import { Save } from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
+
+import { PostActionForm } from '@/app/_components/post/action-form';
+import { Button } from '@/app/_components/shadcn/ui/button';
+
+import type { PostActionFormRef } from './types';
+
 /**
  * 对action-form的封装，直接用于文章创建和编辑页面
  * 通过判断post是否为null来决定是创建还是编辑

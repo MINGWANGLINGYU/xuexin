@@ -6,7 +6,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import type { PostActionFormProps, PostActionFormRef } from './types';
 
 import { Details } from '../collapsible/details';
-// import { MdxEditor } from '../mdx/editor';
+import { MdxEditor } from '../mdx/editor';
 import {
     Form,
     FormControl,
@@ -99,11 +99,11 @@ export const PostActionForm = forwardRef<PostActionFormRef, PostActionFormProps>
                             <FormLabel className="mb-3">文章内容</FormLabel>
                             <FormControl>
                                 <div className="flex flex-auto">
-                                    {/* <MdxEditor
+                                    <MdxEditor
                                         content={body}
                                         setContent={setBody}
                                         disabled={form.formState.isSubmitting}
-                                    /> */}
+                                    />
                                 </div>
                             </FormControl>
                             <FormMessage />
