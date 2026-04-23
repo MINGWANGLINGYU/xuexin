@@ -1,0 +1,50 @@
+# class-validator 和 class-transformer 的中文文档
+
+这是一篇用于测试 MDX 渲染、代码高亮、目录和文章详情样式的固定文章。
+
+## class-validator
+
+`class-validator` 常用于在 TypeScript 项目中验证对象数据。它可以通过装饰器描述字段规则，例如必填、长度、邮箱格式等。
+
+```ts
+import { IsEmail, IsString, Length } from 'class-validator';
+
+export class CreateUserDto {
+    @IsString()
+    @Length(2, 20)
+    name!: string;
+
+    @IsEmail()
+    email!: string;
+}
+```
+
+## class-transformer
+
+`class-transformer` 负责把普通对象转换成类实例，也可以把类实例序列化成普通对象。
+
+```ts
+import { plainToInstance } from 'class-transformer';
+
+const user = plainToInstance(CreateUserDto, {
+    name: '测试用户',
+    email: 'user@example.com',
+});
+```
+
+## 在 NestJS 中配合使用
+
+在 NestJS 中，通常会通过 `ValidationPipe` 同时启用转换和验证。
+
+```ts
+app.useGlobalPipes(
+    new ValidationPipe({
+        transform: true,
+        whitelist: true,
+    }),
+);
+```
+
+## 总结
+
+固定测试文章可以帮助我们在重新填充数据库后，稳定验证文章详情页、MDX 内容渲染和分页列表展示效果。

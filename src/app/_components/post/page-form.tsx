@@ -1,6 +1,5 @@
 'use client';
 
-import type { Post } from '@prisma/client';
 import type { FC, MouseEventHandler } from 'react';
 
 import { isNil } from 'lodash';
@@ -9,6 +8,8 @@ import { useCallback, useRef, useState } from 'react';
 
 import { PostActionForm } from '@/app/_components/post/action-form';
 import { Button } from '@/app/_components/shadcn/ui/button';
+import type { DateToString } from '@/libs/types';
+import type { PostItem } from '@/server/post/type';
 
 import type { PostActionFormRef } from './types';
 
@@ -17,7 +18,7 @@ import type { PostActionFormRef } from './types';
  * 通过判断post是否为null来决定是创建还是编辑
  * @param props
  */
-export const PostPageForm: FC<{ post?: Post }> = ({ post }) => {
+export const PostPageForm: FC<{ post?: DateToString<PostItem> }> = ({ post }) => {
     const ref = useRef<PostActionFormRef | null>(null);
     const [pedding, setPedding] = useState(false);
     const changePadding = useCallback((value: boolean) => {

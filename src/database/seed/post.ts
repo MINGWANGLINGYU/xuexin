@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
 import { faker } from '@/libs/db/utils';
 import { getRandomInt } from '@/libs/random';
 
@@ -21,4 +24,19 @@ export const createPostData = async () => {
             },
         });
     }
+    await prisma.post.create({
+        select: { id: true },
+        data: {
+            thumb: `/uploads/thumb/post-${getRandomInt(1, 8)}.png`,
+            title: 'class-validator和class-transformer的中文文档',
+            body: readFileSync(
+                path.join(__dirname, '../../app/_components/mdx/content-test.mdx'),
+                'utf8',
+            ),
+            slug: 'class-validator-he-class-transformer-de-zhong-wen-wen-dang',
+            summary: '一篇markdown测试文章',
+            keywords: 'nodejs,nestjs,class-validator,class-transformer',
+            description: '这是一篇markdown测试文章',
+        },
+    });
 };

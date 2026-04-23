@@ -7,7 +7,11 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
+import { fetchApi } from '@/libs/api';
+import { getServerBaseUrl } from '@/libs/server-url';
+import type { DateToString } from '@/libs/types';
 import { formatChineseTime } from '@/libs/time';
+import type { PostPaginate } from '@/server/post/type';
 
 import type { IPaginateQueryProps } from '../_components/paginate/types';
 
@@ -15,15 +19,22 @@ import { PostActions } from '../_components/post/list';
 import { PostListPaginate } from '../_components/post/paginate';
 import { PageSkeleton } from '../_components/post/skeleton';
 import { cn } from '../_components/shadcn/utils';
-import { queryPostPaginate } from '../actions/post';
 import $styles from './page.module.css';
 
 const HomePage: FC<{ searchParams: Promise<IPaginateQueryProps> }> = async ({ searchParams }) => {
     const { page: currentPage, limit = 8 } = await searchParams;
+    const baseUrl = await getServerBaseUrl();
     // 当没有传入当前页或当前页小于1时，设置为第1页
     const page = isNil(currentPage) || Number(currentPage) < 1 ? 1 : Number(currentPage);
-
-    const { items, meta } = await queryPostPaginate({ page: Number(page), limit });
+    const result = await fetchApi(
+        async (c) =>
+            c.api.posts.$get({
+                query: { page: page.toString(), limit: limit.toString() },
+            }),
+        baseUrl,
+    );
+    if (!result.ok) throw new Error(((await result.json()) as { message: string }).message);
+    const { items, meta } = (await result.json()) as DateToString<PostPaginate>;
 
     if (meta.totalPages && meta.totalPages > 0 && page > meta.totalPages) {
         return redirect('/');
@@ -70,8 +81,8 @@ const HomePage: FC<{ searchParams: Promise<IPaginateQueryProps> }> = async ({ se
                                         </span>
                                         <time className="ellips">
                                             {!isNil(item.updatedAt)
-                                                ? formatChineseTime(item.updatedAt)
-                                                : formatChineseTime(item.createdAt)}
+                                                ? formatChineseTime(new Date(item.updatedAt))
+                                                : formatChineseTime(new Date(item.createdAt))}
                                         </time>
                                     </div>
                                     <PostActions id={item.id} />

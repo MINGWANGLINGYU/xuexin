@@ -9,8 +9,11 @@ import { notFound } from 'next/navigation';
 import { MdxRender } from '@/app/_components/mdx/render';
 import { PostEditButton } from '@/app/_components/post/edit-button';
 import { cn } from '@/app/_components/shadcn/utils';
-import { queryPostItem } from '@/app/actions/post';
+import { fetchApi } from '@/libs/api';
+import { getServerBaseUrl } from '@/libs/server-url';
+import type { DateToString } from '@/libs/types';
 import { formatChineseTime } from '@/libs/time';
+import type { PostItem } from '@/server/post/type';
 
 import $styles from './page.module.css';
 
@@ -19,7 +22,13 @@ export const generateMetadata = async (
     parent: ResolvingMetadata,
 ): Promise<Metadata> => {
     const { item } = await params;
-    const post = await queryPostItem(item);
+    const baseUrl = await getServerBaseUrl();
+    const result = await fetchApi(
+        async (c) => c.api.posts[':item'].$get({ param: { item } }),
+        baseUrl,
+    );
+    if (!result.ok) return {};
+    const post = (await result.json()) as DateToString<PostItem>;
 
     if (isNil(post)) return {};
 
@@ -32,7 +41,18 @@ export const generateMetadata = async (
 
 const PostItemPage: FC<{ params: Promise<{ item: string }> }> = async ({ params }) => {
     const { item } = await params;
-    const post = await queryPostItem(item);
+    const baseUrl = await getServerBaseUrl();
+    const result = await fetchApi(
+        async (c) => c.api.posts[':item'].$get({ param: { item } }),
+        baseUrl,
+    );
+    if (!result.ok) {
+        if (result.status !== 404) {
+            throw new Error(((await result.json()) as { message: string }).message);
+        }
+        return notFound();
+    }
+    const post = (await result.json()) as DateToString<PostItem>;
     if (isNil(post)) return notFound();
     return (
         <div className="page-item">
