@@ -1,3 +1,4 @@
+import type { Metadata, ResolvingMetadata } from 'next';
 import type { FC } from 'react';
 
 import { isNil } from 'lodash';
@@ -6,11 +7,28 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
 import { MdxRender } from '@/app/_components/mdx/render';
+import { PostEditButton } from '@/app/_components/post/edit-button';
 import { cn } from '@/app/_components/shadcn/utils';
 import { queryPostItem } from '@/app/actions/post';
 import { formatChineseTime } from '@/libs/time';
 
 import $styles from './page.module.css';
+
+export const generateMetadata = async (
+    { params }: { params: Promise<{ item: string }> },
+    parent: ResolvingMetadata,
+): Promise<Metadata> => {
+    const { item } = await params;
+    const post = await queryPostItem(item);
+
+    if (isNil(post)) return {};
+
+    return {
+        title: `${post.title} - ${(await parent).title?.absolute}`,
+        keywords: post.keywords,
+        description: post.description,
+    };
+};
 
 const PostItemPage: FC<{ params: Promise<{ item: string }> }> = async ({ params }) => {
     const { item } = await params;
@@ -31,22 +49,31 @@ const PostItemPage: FC<{ params: Promise<{ item: string }> }> = async ({ params 
                 </div>
 
                 <div className={$styles.content}>
-                    <header className={$styles.title}>
-                        <h1>{post.title}</h1>
-                    </header>
-                    <div className={$styles.meta}>
-                        <span>
-                            <Calendar />
-                        </span>
-                        <time className="ellips">
-                            {!isNil(post.updatedAt)
-                                ? formatChineseTime(post.updatedAt)
-                                : formatChineseTime(post.createdAt)}
-                        </time>
-                    </div>
-                    <div className={$styles.body}>
-                        <MdxRender source={post.body} />
-                    </div>
+                    <MdxRender
+                        source={post.body}
+                        header={
+                            <>
+                                <header className={$styles.title}>
+                                    <h1 className="text-lg lg:text-3xl">{post.title}</h1>
+                                    <div className="ml-2">
+                                        <PostEditButton id={post.id} iconBtn />
+                                    </div>
+                                </header>
+                                <div className={$styles.meta}>
+                                    <div>
+                                        <span>
+                                            <Calendar />
+                                        </span>
+                                        <time className="ellips">
+                                            {!isNil(post.updatedAt)
+                                                ? formatChineseTime(new Date(post.updatedAt))
+                                                : formatChineseTime(new Date(post.createdAt))}
+                                        </time>
+                                    </div>
+                                </div>
+                            </>
+                        }
+                    />
                 </div>
             </div>
         </div>

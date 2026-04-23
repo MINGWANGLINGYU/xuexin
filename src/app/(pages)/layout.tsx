@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import type { FC, PropsWithChildren, ReactNode } from 'react';
 
 import { Header } from '../_components/header';
+import { Toaster } from '../_components/shadcn/ui/sonner';
 import Theme from '../_components/theme';
 import $styles from './layout.module.css';
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ const AppLayout: FC<PropsWithChildren<{ modal: ReactNode }>> = ({ children, moda
             {children}
         </div>
         {modal}
+        <Toaster />
     </Theme>
 );
 export default AppLayout;

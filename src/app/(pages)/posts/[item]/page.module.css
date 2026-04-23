@@ -1,7 +1,7 @@
 @reference "#tailwind.css";
 
 .item {
-    @apply bg-white/80 flex-auto w-full drop-shadow-lg rounded-md flex flex-col;
+    @apply bg-white/80 flex-auto w-full rounded-md flex flex-col;
 
     & > .thumb {
         @apply relative w-full h-36 md:h-48 lg:h-64 block;
@@ -13,18 +13,22 @@
 
     & > .content {
         @apply p-3 flex flex-col flex-auto;
+    }
+}
 
-        & > .title {
-            @apply my-2;
-        }
+.title {
+    @apply my-2 flex;
+}
 
-        & > .meta {
-            @apply flex my-2 items-center;
-        }
+.meta {
+    @apply flex my-2 justify-between;
 
-        & > .meta > time {
-            @apply ml-2;
-        }
+    & > div {
+        @apply flex items-center;
+    }
+
+    & time {
+        @apply ml-2;
     }
 }
 

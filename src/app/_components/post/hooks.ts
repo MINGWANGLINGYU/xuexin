@@ -1,16 +1,19 @@
 'use client';
-
 import type { Post } from '@prisma/client';
-import type { DeepNonNullable } from 'utility-types';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { isNil, trim } from 'lodash';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { createPostItem, updatePostItem } from '@/app/actions/post';
+import { getDefaultFormValues } from '@/libs/form';
 
 import type { PostCreateData, PostFormData, PostUpdateData } from './types';
+
+import { generatePostFormValidator } from './form-validator';
 
 /**
  * 生成react-form-hooks表单的状态
@@ -19,22 +22,19 @@ import type { PostCreateData, PostFormData, PostUpdateData } from './types';
  */
 export const usePostActionForm = (params: { type: 'create' } | { type: 'update'; item: Post }) => {
     // 定义默认数据
-    const defaultValues = useMemo(() => {
-        if (params.type === 'create') {
-            return {
-                title: '文章标题',
-                body: '文章内容',
-                summary: '',
-            } as DeepNonNullable<PostCreateData>;
-        }
-
-        return {
-            title: params.item.title,
-            body: params.item.body,
-            summary: isNil(params.item.summary) ? '' : params.item.summary,
-        } as DeepNonNullable<PostUpdateData>;
-    }, [params.type]);
-    return useForm<DeepNonNullable<PostFormData>>({
+    const defaultValues = useMemo(
+        () =>
+            getDefaultFormValues<Post, PostFormData>(
+                ['title', 'body', 'summary', 'slug', 'keywords', 'description'],
+                params,
+            ),
+        [params.type],
+    );
+    return useForm<PostFormData>({
+        mode: 'all',
+        resolver: zodResolver(
+            generatePostFormValidator(params.type === 'update' ? params.item.id : undefined),
+        ),
         defaultValues,
     });
 };
@@ -46,6 +46,7 @@ export const usePostFormSubmitHandler = (
     params: { type: 'create' } | { type: 'update'; id: string },
 ) => {
     const router = useRouter();
+
     return useCallback(
         async (data: PostFormData) => {
             let post: Post | null;
@@ -67,9 +68,12 @@ export const usePostFormSubmitHandler = (
                 }
                 // 创建或更新文章后跳转到文章详情页
                 // 注意,这里不要用push,防止在详情页后退后返回到创建或编辑页面的弹出框
-                if (!isNil(post)) router.replace(`/posts/${post.id}`);
+                if (!isNil(post)) router.replace(`/posts/${post.slug || post.id}`);
             } catch (error) {
-                console.log('error', error);
+                toast.error('遇到服务器错误,请联系管理员处理', {
+                    id: 'post-save-error',
+                    description: (error as Error).message,
+                });
             }
         },
         [{ ...params }],

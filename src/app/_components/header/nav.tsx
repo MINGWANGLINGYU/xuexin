@@ -1,5 +1,7 @@
 import type { FC } from 'react';
 
+import { House } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 
 import {
@@ -17,6 +19,7 @@ const items = [
     {
         title: '首页',
         href: '/',
+        icon: House,
     },
 ];
 export const HeaderNav: FC = () => (
@@ -29,11 +32,25 @@ export const HeaderNav: FC = () => (
                             href={item.href}
                             className={cn(navigationMenuTriggerStyle())}
                         >
+                            {item.icon && <item.icon className="mr-1" />}
                             {item.title}
                         </NavigationMenuLink>
                     </NavigationMenuItem>
                 ))}
             </NavigationMenuList>
         </NavigationMenu>
+    </div>
+);
+
+export const MobileNav: FC = () => (
+    <div className={$styles.mobileNav}>
+        <ul>
+            {items.map((item) => (
+                <li key={item.href} className={$styles['mobile-menu-item']}>
+                    {item.icon && <item.icon className="tw:mr-2" />}
+                    <Link href={item.href}>{item.title}</Link>
+                </li>
+            ))}
+        </ul>
     </div>
 );

@@ -9,3 +9,15 @@ html {
 .lucide {
     @apply w-4 h-4 stroke-[1px];
 }
+
+.xicon {
+    @apply w-[1em] h-[1em] inline-flex;
+
+    & svg {
+        @apply !w-full !h-full;
+
+        &:not([fill]) {
+            fill: currentcolor;
+        }
+    }
+}

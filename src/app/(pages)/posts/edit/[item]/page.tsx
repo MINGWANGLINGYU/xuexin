@@ -1,3 +1,4 @@
+import type { Metadata, ResolvingMetadata } from 'next';
 import type { FC } from 'react';
 
 import { isNil } from 'lodash';
@@ -11,6 +12,14 @@ import $styles from '../../create/style.module.css';
 
 // 添加动态标记，强制使用 SSR
 export const dynamic = 'force-dynamic';
+
+export const generateMetadata = async (_: any, parent: ResolvingMetadata): Promise<Metadata> => {
+    return {
+        title: `编辑文章 - ${(await parent).title?.absolute}`,
+        description: '文章编辑页面',
+    };
+};
+
 
 const PostEditPage: FC<{ params: Promise<{ item: string }> }> = async ({ params }) => {
     const { item } = await params;

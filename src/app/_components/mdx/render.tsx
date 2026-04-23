@@ -10,7 +10,7 @@ import { serializeMdx } from './utils';
  * @param props
  */
 export const MdxRender: FC<MdxRnderProps> = async (props) => {
-    const { source, options, hydrate } = props;
+    const { source, options, hydrate, header } = props;
     const result = await serializeMdx(source, options ?? {});
-    return <MdxHydrate {...(hydrate ?? {})} serialized={result} />;
+    return <MdxHydrate {...(hydrate ?? {})} serialized={result} header={header} />;
 };
