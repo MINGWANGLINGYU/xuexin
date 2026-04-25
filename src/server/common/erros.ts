@@ -1,12 +1,6 @@
-import type { Hook } from '@hono/zod-validator';
+import type { Hook } from '@hono/standard-validator';
 
 import { isNil, isObject } from 'lodash';
-
-type ErrorResult = {
-    code?: number;
-    errors?: unknown;
-    message: string;
-};
 
 /**
  * 异常响应生成
@@ -34,7 +28,7 @@ export const createErrorResult = (title: string, error?: any, code?: number) => 
  * @param result
  * @param c
  */
-export const defaultValidatorErrorHandler: Hook<any, any, any, any, ErrorResult> = (result, c) => {
+export const defaultValidatorErrorHandler: Hook<any, any, any, any> = (result, c) => {
     if (!result.success) {
         return c.json(
             {
