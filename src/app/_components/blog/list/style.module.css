@@ -1,0 +1,69 @@
+@reference "#tailwind.css";
+
+.blogIndex {
+    @apply grid grid-cols-1 gap-5 py-5 lg:grid-cols-[minmax(0,1fr)_18rem];
+}
+
+.container {
+    @apply flex min-w-0 flex-col gap-4;
+}
+
+.list {
+    @apply w-full space-y-4;
+}
+
+.item {
+    @apply flex flex-col rounded-md transition-all duration-300 backdrop-blur-md;
+}
+
+.content {
+    @apply relative overflow-hidden rounded-md bg-white/80 p-5 shadow-sm transition-colors dark:bg-zinc-900/70;
+}
+
+.header {
+    @apply flex items-start gap-3;
+}
+
+.icon {
+    @apply h-10 w-10 flex-none rounded-md bg-cover bg-center;
+}
+
+.headerRight {
+    @apply min-w-0 flex-1 space-y-2;
+}
+
+.title {
+    @apply block max-w-full overflow-hidden text-foreground;
+}
+
+.title h2 {
+    @apply text-lg font-bold;
+}
+
+.categories {
+    @apply flex flex-wrap items-center gap-2 text-xs text-muted-foreground;
+}
+
+.summary {
+    @apply mt-4 text-sm leading-7 text-muted-foreground;
+}
+
+.footer {
+    @apply mt-4 flex flex-col gap-3 text-muted-foreground md:flex-row md:items-end md:justify-between;
+}
+
+.meta {
+    @apply flex min-w-0 flex-col gap-2 text-xs;
+}
+
+.tags {
+    @apply flex flex-wrap items-center gap-2;
+}
+
+.tagActived {
+    @apply bg-accent text-accent-foreground;
+}
+
+.info span {
+    @apply flex items-center;
+}

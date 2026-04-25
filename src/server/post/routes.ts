@@ -33,9 +33,11 @@ import {
     updatePostItem,
 } from './service';
 export const postTags = ['文章操作'];
+export const postPath = '/posts';
+export type PostApiType = typeof postRoutes;
 
 const app = createHonoApp();
-export const postApi = app
+export const postRoutes = app
     .get(
         '/',
         describeRoute({
@@ -53,7 +55,10 @@ export const postApi = app
             try {
                 const query = c.req.valid('query');
                 const options = Object.fromEntries(
-                    Object.entries(query).map(([k, v]) => [k, Number(v)]),
+                    Object.entries(query).map(([k, v]) => [
+                        k,
+                        ['page', 'limit'].includes(k) ? Number(v) : v,
+                    ]),
                 );
                 const result = await queryPostPaginate(options);
                 return c.json(result, 200);
@@ -78,8 +83,13 @@ export const postApi = app
         async (c) => {
             try {
                 const query = c.req.valid('query');
-                const limit = query.limit ? Number(query.limit) : undefined;
-                const result = await queryPostTotalPages(limit);
+                const options = Object.fromEntries(
+                    Object.entries(query).map(([k, v]) => [
+                        k,
+                        ['page', 'limit'].includes(k) ? Number(v) : v,
+                    ]),
+                );
+                const result = await queryPostTotalPages(options);
                 return c.json({ result }, 200);
             } catch (error) {
                 return c.json(createErrorResult('查询页面总数失败', error), 500);

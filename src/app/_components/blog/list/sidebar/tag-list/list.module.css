@@ -1,0 +1,9 @@
+@reference "#tailwind.css";
+
+.container {
+    @apply flex flex-wrap gap-2;
+}
+
+.tagActived {
+    @apply bg-accent text-accent-foreground;
+}

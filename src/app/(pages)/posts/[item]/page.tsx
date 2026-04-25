@@ -6,14 +6,15 @@ import { Calendar } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
+import type { DateToString } from '@/libs/types';
+import type { PostItem } from '@/server/post/type';
+
 import { MdxRender } from '@/app/_components/mdx/render';
 import { PostEditButton } from '@/app/_components/post/edit-button';
 import { cn } from '@/app/_components/shadcn/utils';
 import { fetchApi } from '@/libs/api';
 import { getServerBaseUrl } from '@/libs/server-url';
-import type { DateToString } from '@/libs/types';
 import { formatChineseTime } from '@/libs/time';
-import type { PostItem } from '@/server/post/type';
 
 import $styles from './page.module.css';
 

@@ -1,0 +1,27 @@
+@reference "#tailwind.css";
+
+.container {
+    @apply text-sm;
+}
+
+.accordion {
+    @apply w-full;
+}
+
+.folderItem,
+.item {
+    @apply rounded-sm;
+}
+
+.folderLink,
+.itemLink {
+    @apply flex h-8 items-center;
+}
+
+.active {
+    @apply bg-accent text-accent-foreground;
+}
+
+.children {
+    @apply ml-2 border-l pl-2;
+}

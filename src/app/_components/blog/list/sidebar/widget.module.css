@@ -1,0 +1,21 @@
+@reference "#tailwind.css";
+
+.widget {
+    @apply rounded-md bg-white/80 p-4 dark:bg-zinc-900/70;
+}
+
+.mobileWidget {
+    @apply rounded-md bg-white/80 px-4 dark:bg-zinc-900/70;
+}
+
+.mobileItem {
+    @apply border-none;
+}
+
+.title {
+    @apply flex items-center gap-2 font-medium;
+}
+
+.content {
+    @apply mt-3 max-h-[22rem] overflow-auto;
+}

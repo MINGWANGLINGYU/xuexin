@@ -34,6 +34,12 @@ export const getRandItemData = <T>(list: T[]) => {
     return list[getRandomMin(list.length)];
 };
 
+export const randomIntFrom = (min: number, max: number) => {
+    const minc = Math.ceil(min);
+    const maxc = Math.floor(max);
+    return Math.floor(Math.random() * (maxc - minc + 1)) + minc;
+};
+
 /**
  * 从列表中获取多个随机项组成一个新列表
  * @param list

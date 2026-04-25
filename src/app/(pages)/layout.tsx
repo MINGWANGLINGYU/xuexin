@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import type { FC, PropsWithChildren, ReactNode } from 'react';
 
-import { Header } from '../_components/header';
+import { Footer } from '../_components/layout/footer';
+import { Header } from '../_components/layout/header';
 import { Toaster } from '../_components/shadcn/ui/sonner';
 import Theme from '../_components/theme';
 import $styles from './layout.module.css';
 export const metadata: Metadata = {
-    title: 'pincman的博客',
+    title: '3R教室TS全栈课线上演示',
     description:
-        'pincman的个人博客,提供一些ts、react、node.js、php、golang相关的技术文档以及分享一些生活琐事',
+        '3R教室 - 提供最好的typescript、react、node.js、next.js、hono.js、nestjs等全栈开发相关课程',
 };
 
 const AppLayout: FC<PropsWithChildren<{ modal: ReactNode }>> = ({ children, modal }) => (
@@ -16,6 +17,7 @@ const AppLayout: FC<PropsWithChildren<{ modal: ReactNode }>> = ({ children, moda
         <div className={$styles.layout}>
             <Header />
             {children}
+            <Footer />
         </div>
         {modal}
         <Toaster />

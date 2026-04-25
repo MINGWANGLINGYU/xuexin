@@ -1,9 +1,10 @@
 import type { FC } from 'react';
 
+import type { PostPageNumbers } from '@/server/post/type';
+
 import { SimplePaginate } from '@/app/_components/paginate/simple';
 import { fetchApi } from '@/libs/api';
 import { getServerBaseUrl } from '@/libs/server-url';
-import type { PostPageNumbers } from '@/server/post/type';
 
 export const PostListPaginate: FC<{ limit: number; page: number }> = async ({ limit, page }) => {
     const baseUrl = await getServerBaseUrl();

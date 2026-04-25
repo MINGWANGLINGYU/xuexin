@@ -1,0 +1,5 @@
+@reference "#tailwind.css";
+
+.sidebar {
+    @apply min-w-0 lg:sticky lg:top-20 lg:self-start;
+}
