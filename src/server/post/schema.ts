@@ -42,6 +42,9 @@ export const postPaginateSchema = z
             perPage: z.number().meta({ description: '每页文章数量' }),
             totalPages: z.number().optional().meta({ description: '文章总页数' }),
             currentPage: z.number().meta({ description: '当前页码' }),
+            tags: z.string().optional().meta({ description: '关联标签列表' }),
+            categories: categoryListSchema.meta({ description: '关联分类及其祖先分类列表' }),
+            category: categorySchema.nullable().meta({ description: '关联分类' }),
         }),
     })
     .meta({ id: 'PostPagniate', description: '文章分页数据' });
@@ -52,6 +55,8 @@ export const postPaginateSchema = z
 export const postPageNumbersSchema = z
     .object({
         result: z.coerce.number(),
+        tag: z.string().optional().meta({ description: '标签过滤' }),
+        category: z.string().optional().meta({ description: '分类过滤' }),
     })
     .meta({ id: 'PostNumbers', description: '文章总页数' });
 
@@ -69,13 +74,11 @@ export const postPaginateRequestQuerySchema = z.object({
 /**
  * 文章页面总数查询请求数据结构
  */
-export const postPageNumbersRequestQuerySchema = z
-    .object({
-        limit: z.coerce.number().optional().meta({ description: '每页数量' }),
-        tag: z.string().optional().meta({ description: '标签过滤' }),
-        category: z.string().optional().meta({ description: '分类过滤' }),
-    })
-    .meta({ description: '文章总页数查询参数' });
+export const postPageNumbersRequestQuerySchema = z.object({
+    limit: z.coerce.number().optional().meta({ description: '每页数量' }),
+    tag: z.string().optional().meta({ description: '标签过滤' }),
+    category: z.string().optional().meta({ description: '分类过滤' }),
+});
 
 /**
  * 文章详情查询请求数据结构

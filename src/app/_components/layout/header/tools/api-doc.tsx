@@ -1,5 +1,3 @@
-'use client';
-
 import type { FC } from 'react';
 
 import { Webhook } from 'lucide-react';
@@ -13,6 +11,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/app/_components/shadcn/ui/tooltip';
+import { appConfig } from '@/config/app';
 
 export const ApiDocButton: FC = () => (
     <Suspense fallback={null}>
@@ -20,7 +19,10 @@ export const ApiDocButton: FC = () => (
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button type="button" size="icon" className="ml-auto" variant="outline" asChild>
-                        <Link href="/api/docs" target="_blank">
+                        <Link
+                            href={`${appConfig.baseUrl}${appConfig.apiPath}/docs`}
+                            target="_blank"
+                        >
                             <Webhook />
                         </Link>
                     </Button>

@@ -8,56 +8,48 @@ import type {
 } from '@/server/post/type';
 
 import { buildClient, fetchApi } from '@/libs/hono';
+import { postPath } from '@/server/post/routes';
 
-export const postPath = '/posts';
 export const postClient = buildClient<PostApiType>(postPath);
 
 export const postApi = {
-    paginate: async (query: PostPaginateRequestQuery = {}, baseUrl = '') => {
+    paginate: async (query: PostPaginateRequestQuery = {}) => {
         const page = isNil(query.page) || Number(query.page) < 1 ? 1 : Number(query.page);
-        return fetchApi(buildClient<PostApiType>(postPath, baseUrl), async (c) =>
+        return fetchApi(postClient, async (c) =>
             c.index.$get({
                 query: {
                     ...query,
                     page: page.toString(),
                     limit: (query.limit ?? 8).toString(),
-                } as any,
+                },
             }),
         );
     },
 
-    detail: async (item: string, baseUrl = '') =>
-        fetchApi(buildClient<PostApiType>(postPath, baseUrl), async (c) =>
-            c[':item'].$get({ param: { item } }),
-        ),
+    detail: async (item: string) =>
+        fetchApi(postClient, async (c) => c[':item'].$get({ param: { item } })),
 
-    detailBySlug: async (slug: string, baseUrl = '') =>
-        fetchApi(buildClient<PostApiType>(postPath, baseUrl), async (c) =>
-            c.byslug[':slug'].$get({ param: { slug } }),
-        ),
+    detailBySlug: async (slug: string) =>
+        fetchApi(postClient, async (c) => c.byslug[':slug'].$get({ param: { slug } })),
 
-    detailById: async (id: string, baseUrl = '') =>
-        fetchApi(buildClient<PostApiType>(postPath, baseUrl), async (c) =>
-            c.byid[':id'].$get({ param: { id } }),
-        ),
+    detailById: async (id: string) =>
+        fetchApi(postClient, async (c) => c.byid[':id'].$get({ param: { id } })),
 
-    pageNumbers: async (query: PostPaginateNumberRequestQuery = {}, baseUrl = '') =>
-        fetchApi(buildClient<PostApiType>(postPath, baseUrl), async (c) =>
+    pageNumbers: async (query: PostPaginateNumberRequestQuery = {}) =>
+        fetchApi(postClient, async (c) =>
             c['page-numbers'].$get({
-                query: { ...query, limit: (query.limit ?? 8).toString() } as any,
+                query: { ...query, limit: (query.limit ?? 8).toString() },
             }),
         ),
     create: async (data: PostCreateOrUpdateData) =>
-        fetchApi(buildClient<PostApiType>(postPath), async (c) => c.index.$post({ json: data })),
+        fetchApi(postClient, async (c) => c.index.$post({ json: data })),
     update: async (id: string, data: PostCreateOrUpdateData) =>
-        fetchApi(buildClient<PostApiType>(postPath), async (c) =>
+        fetchApi(postClient, async (c) =>
             c[':id'].$patch({
                 param: { id },
                 json: data,
             }),
         ),
     delete: async (id: string) =>
-        fetchApi(buildClient<PostApiType>(postPath), async (c) =>
-            c[':id'].$delete({ param: { id } }),
-        ),
+        fetchApi(postClient, async (c) => c[':id'].$delete({ param: { id } })),
 };

@@ -20,7 +20,7 @@ export const Button: FC<{ iconBtn?: boolean }> = ({ iconBtn }) => {
                 'rounded-sm': !iconBtn,
                 'size-9': iconBtn,
             })}
-            variant="secondary"
+            variant="outline"
             size={iconBtn ? 'icon' : 'default'}
         >
             <Link href={`/blog/create${urlQuery}`}>

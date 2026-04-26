@@ -1,21 +1,25 @@
 @reference "#tailwind.css";
 
 .widget {
-    @apply rounded-md bg-white/80 p-4 dark:bg-zinc-900/70;
-}
-
-.mobileWidget {
-    @apply rounded-md bg-white/80 px-4 dark:bg-zinc-900/70;
-}
-
-.mobileItem {
-    @apply border-none;
+    @apply flex w-full flex-col p-2;
 }
 
 .title {
-    @apply flex items-center gap-2 font-medium;
+    @apply w-full py-2 flex space-x-1 items-center;
 }
 
 .content {
-    @apply mt-3 max-h-[22rem] overflow-auto;
+    @apply w-full p-2 max-h-[12rem] overflow-auto;
+}
+
+.mobileWidget {
+    .mobileItem {
+        @apply py-0 border-none;
+
+        & > h3 {
+            & > button {
+                @apply py-0;
+            }
+        }
+    }
 }

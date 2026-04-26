@@ -1,8 +1,9 @@
-import { describeRoute, validator } from 'hono-openapi';
+import { describeRoute } from 'hono-openapi';
+import { validator } from 'hono-openapi/zod';
 import { isNil } from 'lodash';
 
 import { createHonoApp } from '../common/app';
-import { createErrorResult, defaultValidatorErrorHandler } from '../common/erros';
+import { createErrorResult, defaultValidatorErrorHandler } from '../common/error';
 import {
     createNotFoundErrorResponse,
     createServerErrorResponse,

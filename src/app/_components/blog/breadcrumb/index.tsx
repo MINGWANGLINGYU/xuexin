@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 
-import { Home, Slash, Tag } from 'lucide-react';
+import Home from '@ricons/fluent/Home24Filled';
+import { Slash, Tag } from 'lucide-react';
 import Link from 'next/link';
 import { Fragment } from 'react';
 
@@ -12,29 +13,25 @@ import {
     BreadcrumbSeparator,
 } from '../../shadcn/ui/breadcrumb';
 import { cn } from '../../shadcn/utils';
-
+import $styles from './style.module.css';
 export interface IBlogBreadcrumbItem {
     id: string;
     link?: string;
     text: string;
 }
-
 interface IBlogBreadcrumbProps {
     className?: string;
     items?: IBlogBreadcrumbItem[];
     tag?: string;
     basePath?: string;
 }
-
 export const BlogBreadCrumb: FC<IBlogBreadcrumbProps> = (props) => {
     const { items, className, tag, basePath = '' } = props;
     return (
-        <Breadcrumb
-            className={cn('flex min-h-8 items-center justify-between gap-3 text-xs', className)}
-        >
+        <Breadcrumb className={cn($styles.breadcrumb, className)}>
             <BreadcrumbList className="gap-0.5 sm:gap-1">
                 <BreadcrumbItem>
-                    <BreadcrumbLink asChild className="flex items-center text-xs">
+                    <BreadcrumbLink className="flex items-center text-xs" asChild>
                         <Link href="/">
                             <span className="xicon mr-1">
                                 <Home />
@@ -51,7 +48,9 @@ export const BlogBreadCrumb: FC<IBlogBreadcrumbProps> = (props) => {
                         <BreadcrumbItem className="flex items-center text-xs">
                             {item.link ? (
                                 <BreadcrumbLink asChild>
-                                    <Link href={`${basePath}${item.link}`}>{item.text}</Link>
+                                    <Link href={`${basePath}${item.link}`} passHref>
+                                        {item.text}
+                                    </Link>
                                 </BreadcrumbLink>
                             ) : (
                                 <span className="text-foreground">{item.text}</span>

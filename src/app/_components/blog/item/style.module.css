@@ -1,7 +1,11 @@
 @reference "#tailwind.css";
 
+.breadcrumbs {
+    @apply mb-4 w-full flex-none;
+}
+
 .item {
-    @apply bg-white/80 flex-auto w-full rounded-md flex flex-col;
+    @apply bg-white/80 flex-auto w-full shadow-lg rounded-md flex flex-col;
 
     & > .thumb {
         @apply relative w-full h-36 md:h-48 lg:h-64 block;
@@ -17,23 +21,31 @@
 }
 
 .title {
-    @apply my-2 flex;
+    @apply my-2 flex justify-between;
 }
 
 .meta {
-    @apply flex my-2 justify-between;
+    @apply flex flex-col space-y-2;
 
-    & > div {
-        @apply flex items-center;
+    & > .info {
+        @apply flex flex-wrap items-center;
+
+        & > span {
+            @apply mt-2 inline-flex items-center text-sm text-muted-foreground mr-3;
+        }
     }
 
-    & time {
-        @apply ml-2;
+    & > .tags {
+        @apply flex flex-wrap items-center;
+
+        & > a {
+            @apply text-sm text-muted-foreground mr-2 border  rounded-[0.2rem] px-2;
+        }
     }
 }
 
 html[class='dark'] {
     .item {
-        @apply !bg-zinc-800/50;
+        @apply bg-zinc-800/80;
     }
 }

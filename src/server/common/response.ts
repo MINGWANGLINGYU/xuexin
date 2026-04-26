@@ -1,6 +1,6 @@
 import type { ZodType } from 'zod';
 
-import { resolver } from 'hono-openapi';
+import { resolver } from 'hono-openapi/zod';
 
 import { errorSchema } from './schema';
 

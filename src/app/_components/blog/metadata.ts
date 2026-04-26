@@ -1,11 +1,11 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 
 import { isNil } from 'lodash';
+import { cache } from 'react';
 
 import { categoryApi } from '@/api/category';
 import { postApi } from '@/api/post';
 import { tagApi } from '@/api/tag';
-import { getServerBaseUrl } from '@/libs/server-url';
 
 export interface IBlogMetadata {
     params: Promise<{ categories?: string[] }>;
@@ -18,6 +18,14 @@ export interface IPostMetadata {
     parent: ResolvingMetadata;
 }
 
+const getBreadcrumbs = cache(async (latest: string) => await categoryApi.breadcrumb(latest));
+const getTagDetail = cache(async (tag: string) => await tagApi.detail(tag));
+const getPostDetails = cache(async (item: string) => await postApi.detail(item));
+
+/**
+ * 获取文章列表元数据
+ * @param param0
+ */
 export const getBlogMetadata = async ({
     params,
     searchParams,
@@ -27,9 +35,9 @@ export const getBlogMetadata = async ({
     let keywords = (await parent).keywords ?? [];
     const { categories } = await params;
     const { tag } = await searchParams;
-    const baseUrl = await getServerBaseUrl();
     if (!isNil(categories) && categories.length > 0) {
-        const result = await categoryApi.breadcrumb(categories[categories.length - 1], baseUrl);
+        const result = await getBreadcrumbs(categories[categories.length - 1]);
+        // const result = await categoryApi.breadcrumb(categories[categories.length - 1]);
         if (!result.ok) return {};
         const data = await result.json();
         if (data.length > 0) {
@@ -38,11 +46,12 @@ export const getBlogMetadata = async ({
         }
     }
     if (!isNil(tag)) {
-        const result = await tagApi.detail(tag, baseUrl);
+        const result = await getTagDetail(tag);
+        // const result = await tagApi.detail(tag);
         if (result.ok) {
             const data = await result.json();
             if (!isNil(data)) title = `${title}${data.text} | `;
-            keywords = [...keywords, tag];
+            keywords.push(tag);
         }
     }
 
@@ -54,10 +63,14 @@ export const getBlogMetadata = async ({
     };
 };
 
+/**
+ * 获取文章元数据
+ * @param param0
+ */
 export const getPostItemMetadata = async ({ params, parent }: IPostMetadata): Promise<Metadata> => {
     const { item } = await params;
-    const baseUrl = await getServerBaseUrl();
-    const result = await postApi.detail(item, baseUrl);
+
+    const result = await getPostDetails(item);
     if (!result.ok) return {};
     const post = await result.json();
     const title = `${post.title} - ${(await parent).title?.absolute}`;

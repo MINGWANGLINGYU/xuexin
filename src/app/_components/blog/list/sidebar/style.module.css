@@ -1,5 +1,5 @@
 @reference "#tailwind.css";
 
 .sidebar {
-    @apply min-w-0 lg:sticky lg:top-20 lg:self-start;
+    @apply flex w-full lg:w-72 flex-none flex-col lg:order-2 order-1 mb-6 lg:mb-0;
 }

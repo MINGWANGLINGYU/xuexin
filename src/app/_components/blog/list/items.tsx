@@ -5,19 +5,21 @@ import { isNil } from 'lodash';
 import { Calendar, Tag } from 'lucide-react';
 import Link from 'next/link';
 
-import type { IPaginateQueryProps } from '@/app/_components/paginate/types';
 import type { CategoryItem } from '@/server/category/type';
 import type { PostItem } from '@/server/post/type';
 
 import { randomIntFrom } from '@/libs/random';
 import { formatTime } from '@/libs/time';
 
+import type { IPaginateQueryProps } from '../../paginate/types';
+
 import { cn } from '../../shadcn/utils';
 import { TagLink } from '../form/tag';
 import { getBreadcrumbsLinks } from '../utils';
 import { PostActions } from './actions';
+import BlogIcons from './blog-icons.png';
+import { PostListItemMotion } from './item-motion';
 import $styles from './style.module.css';
-
 export interface PostListProps extends IPaginateQueryProps {
     tag?: string;
     category?: CategoryItem;
@@ -26,17 +28,17 @@ export interface PostListProps extends IPaginateQueryProps {
 export const PostList: FC<{ items: PostItem[]; activeTag?: string }> = ({ items, activeTag }) => (
     <div className={cn($styles.list)}>
         {items.map((item) => (
-            <div className={$styles.item} key={item.id}>
+            <PostListItemMotion key={item.id}>
                 <div className={cn($styles.content, 'page-block hover:page-block-hover')}>
                     <Link
                         href={`/blog/posts/${item.slug || item.id}`}
                         className="absolute inset-0 z-[1]"
-                    />
+                    ></Link>
                     <header className={$styles.header}>
                         <div
                             className={$styles.icon}
                             style={{
-                                backgroundImage: `url(${item.thumb})`,
+                                backgroundImage: `url(${BlogIcons.src})`,
                                 backgroundPositionY: `${randomIntFrom(0, 6) * -40}px`,
                             }}
                         />
@@ -105,7 +107,7 @@ export const PostList: FC<{ items: PostItem[]; activeTag?: string }> = ({ items,
                         <PostActions item={item} className="relative z-[2]" />
                     </div>
                 </div>
-            </div>
+            </PostListItemMotion>
         ))}
     </div>
 );

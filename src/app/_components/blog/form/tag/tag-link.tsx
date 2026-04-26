@@ -1,23 +1,26 @@
+'use client';
 import type { FC } from 'react';
 
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 
 import type { TagItem } from '@/server/tag/type';
 
-import { cn } from '@/app/_components/shadcn/utils';
-
-export const TagLink: FC<{ tag: TagItem; className?: string; asSpan?: boolean }> = ({
-    tag,
-    className,
-    asSpan,
-}) => {
-    const classNames = cn(
-        'inline-flex items-center rounded-sm border px-2 py-0.5 text-xs transition-colors hover:bg-accent',
-        className,
+export const TagLink: FC<{ tag: TagItem; className?: string }> = ({ tag, className }) => {
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const getPageUrl = useCallback(
+        (item: TagItem) => {
+            const params = new URLSearchParams(searchParams);
+            if (params.has('tag')) params.delete('tag');
+            params.set('tag', item.text);
+            return pathname + (params.toString() ? `?${params.toString()}` : '');
+        },
+        [searchParams],
     );
-    if (asSpan) return <span className={classNames}>{tag.text}</span>;
     return (
-        <Link href={`/?tag=${encodeURIComponent(tag.text)}`} className={classNames}>
+        <Link key={tag.id} href={getPageUrl(tag)} className={className ?? ''}>
             {tag.text}
         </Link>
     );

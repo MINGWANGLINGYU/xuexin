@@ -4,7 +4,8 @@ import type { FC } from 'react';
 
 import type { PostItem } from '@/server/post/type';
 
-import { cn } from '../../../shadcn/utils';
+import { cn } from '@/app/_components/shadcn/utils';
+
 import { PostDelete } from './delete';
 import { PostEditButton } from './edit-button';
 

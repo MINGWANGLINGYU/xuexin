@@ -6,6 +6,36 @@ import { categoryApi } from '@/api/category';
 
 import type { IBlogBreadcrumbItem } from './breadcrumb';
 
+/**
+ * 获取扁平化(面包屑)分类数据
+ * @param categories
+ */
+export const getBreadcrumbsCategories = async (
+    categories?: string[],
+): Promise<CategoryItem[] | false> => {
+    if (!isNil(categories) && categories.length > 0) {
+        const latest = categories[categories.length - 1];
+        const result = await categoryApi.breadcrumb(latest);
+        if (!result.ok) throw new Error((await result.json()).message);
+        const items = await result.json();
+        if (items.length !== categories.length) return false;
+        if (
+            !items.every(
+                (item, index) => item.id === categories[index] || item.slug === categories[index],
+            )
+        ) {
+            return false;
+        }
+        return items;
+    }
+    return [];
+};
+
+/**
+ * 获取嵌套面包屑数据
+ * @param categories
+ * @param type
+ */
 export const getBreadcrumbsLinks = (
     categories: CategoryItem[],
     type: 'breadcrumb' | 'post' = 'breadcrumb',
@@ -22,26 +52,4 @@ export const getBreadcrumbsLinks = (
         }
         return item;
     });
-};
-
-export const getBreadcrumbsCategories = async (
-    categories?: string[],
-    baseUrl = '',
-): Promise<CategoryItem[] | false> => {
-    if (!isNil(categories) && categories.length > 0) {
-        const latest = categories[categories.length - 1];
-        const result = await categoryApi.breadcrumb(latest, baseUrl);
-        if (!result.ok) throw new Error(((await result.json()) as { message: string }).message);
-        const items = (await result.json()) as CategoryItem[];
-        if (items.length !== categories.length) return false;
-        if (
-            !items.every(
-                (item, index) => item.id === categories[index] || item.slug === categories[index],
-            )
-        ) {
-            return false;
-        }
-        return items;
-    }
-    return [];
 };

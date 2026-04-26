@@ -1,3 +1,13 @@
+:root {
+    --z-index-home-mouse: 30;
+    --z-index-mobile-toc: 40;
+    --z-index-disable-before: 45;
+    --z-index-header: 49;
+    --z-index-modal: 50;
+    --z-index-mobile-header-modal: 60;
+    --z-index-mobile-header: 999;
+}
+
 html {
     @apply scroll-smooth;
 }

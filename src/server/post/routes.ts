@@ -1,9 +1,10 @@
-import { describeRoute, validator } from 'hono-openapi';
+import { describeRoute } from 'hono-openapi';
+import { validator } from 'hono-openapi/zod';
 import { isNil } from 'lodash';
 import z from 'zod';
 
 import { createHonoApp } from '../common/app';
-import { createErrorResult, defaultValidatorErrorHandler } from '../common/erros';
+import { createErrorResult, defaultValidatorErrorHandler } from '../common/error';
 import {
     create201SuccessResponse,
     createNotFoundErrorResponse,
@@ -25,6 +26,7 @@ import {
 import {
     createPostItem,
     deletePostItem,
+    isSlugUnique,
     queryPostItem,
     queryPostItemById,
     queryPostItemBySlug,
@@ -183,8 +185,14 @@ export const postRoutes = app
         validator('json', getPostItemRequestSchema(), defaultValidatorErrorHandler),
         async (c) => {
             try {
-                const body = c.req.valid('json');
-                const result = await createPostItem(body);
+                const schema = getPostItemRequestSchema(await isSlugUnique());
+                const validated = await schema.safeParseAsync(await c.req.json());
+
+                if (!validated.success) {
+                    return c.json(createErrorResult('请求数据验证失败', validated.error), 400);
+                }
+
+                const result = await createPostItem(validated.data);
                 return c.json(result, 201);
             } catch (error) {
                 return c.json(createErrorResult('创建文章失败', error), 500);
@@ -208,8 +216,14 @@ export const postRoutes = app
         async (c) => {
             try {
                 const params = c.req.valid('param');
-                const body = c.req.valid('json');
-                const result = await updatePostItem(params.id, body);
+                const schema = getPostItemRequestSchema(await isSlugUnique(params.id));
+                const validated = await schema.safeParseAsync(await c.req.json());
+
+                if (!validated.success) {
+                    return c.json(createErrorResult('请求数据验证失败', validated.error), 400);
+                }
+
+                const result = await updatePostItem(params.id, validated.data);
                 return c.json(result, 200);
             } catch (error) {
                 return c.json(createErrorResult('更新文章失败', error), 500);

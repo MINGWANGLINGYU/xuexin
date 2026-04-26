@@ -10,25 +10,31 @@ import type { CategoryItem } from './type';
 
 /**
  * 构建树形结构
- * @param data 所有分类项目
+ * @param items 所有分类项目
  * @returns 树形结构的根节点数组
  */
+
 function buildTree(data: CategoryItem[]): CategoryItem[] {
     if (data.length === 0) return [];
+    // 按路径长度排序确保父节点先被处理
     const sortedNodes = [...data].sort((a, b) => a.path.length - b.path.length) as CategoryItem[];
 
     const map: { [path: string]: CategoryItem } = {};
     const roots: CategoryItem[] = [];
-    const rootDepth = Math.min(...data.map((item) => item.depth));
 
     for (const node of sortedNodes) {
-        const currentNode: CategoryItem = { ...node };
+        // 创建带 children 的新节点对象
+        const currentNode: CategoryItem = {
+            ...node,
+        };
+
         const path = currentNode.path;
         map[path] = currentNode;
 
-        if (currentNode.depth === rootDepth) {
+        if (currentNode.depth === data[0].depth) {
             roots.push(currentNode);
         } else {
+            // 计算父路径（移除最后 4 位）
             const parentPath = path.slice(0, -4);
             const parentNode = map[parentPath];
 
@@ -38,6 +44,7 @@ function buildTree(data: CategoryItem[]): CategoryItem[] {
             }
         }
     }
+    // 按原始路径顺序排序根节点
     return roots.sort((a, b) => a.path.localeCompare(b.path));
 }
 
@@ -55,12 +62,12 @@ const getFlatTree = (items: CategoryItem[]): CategoryItem[] => {
 };
 
 /**
- * 查询分类及其后代信息
- * @param parent
+ * 查询分类树信息
+ * @param parentId
  */
 const queryCategoryDescendants = async (parent?: string): Promise<CategoryItem[]> => {
     const categories = await db.category.findMany({
-        where: parent ? { OR: [{ id: parent }, { slug: parent }] } : { depth: 1 },
+        where: parent ? { depth: 1 } : { OR: [{ id: parent }, { slug: parent }] },
     });
     return (
         await Promise.all(
@@ -76,7 +83,7 @@ const queryCategoryDescendants = async (parent?: string): Promise<CategoryItem[]
 
 /**
  * 查询分类树信息
- * @param parent
+ * @param parentId
  */
 export const queryCategoryTree = async (parent?: string): Promise<CategoryItem[]> => {
     const categories = await queryCategoryDescendants(parent);
@@ -84,8 +91,8 @@ export const queryCategoryTree = async (parent?: string): Promise<CategoryItem[]
 };
 
 /**
- * 查询分类列表(扁平树)信息
- * @param parent
+ * 查询结合列表(扁平树)信息
+ * @param parentId
  */
 export const queryCategoryList = async (parent?: string) => {
     const tree = await queryCategoryTree(parent);

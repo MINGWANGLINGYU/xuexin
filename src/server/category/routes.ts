@@ -1,7 +1,8 @@
-import { describeRoute, validator } from 'hono-openapi';
+import { describeRoute } from 'hono-openapi';
+import { validator as zValidator } from 'hono-openapi/zod';
 
 import { createHonoApp } from '../common/app';
-import { createErrorResult, defaultValidatorErrorHandler } from '../common/erros';
+import { createErrorResult, defaultValidatorErrorHandler } from '../common/error';
 import {
     createServerErrorResponse,
     createSuccessResponse,
@@ -36,7 +37,7 @@ export const categoryRoutes = app
                 ...createServerErrorResponse('查询分类列表数据失败'),
             },
         }),
-        validator('param', categoryListRequestParamsSchema, defaultValidatorErrorHandler),
+        zValidator('param', categoryListRequestParamsSchema, defaultValidatorErrorHandler),
         async (c) => {
             try {
                 const { parent } = c.req.valid('param');
@@ -60,7 +61,7 @@ export const categoryRoutes = app
                 ...createServerErrorResponse('查询分类树数据失败'),
             },
         }),
-        validator('param', categoryListRequestParamsSchema, defaultValidatorErrorHandler),
+        zValidator('param', categoryListRequestParamsSchema, defaultValidatorErrorHandler),
         async (c) => {
             try {
                 const { parent } = c.req.valid('param');
@@ -83,7 +84,7 @@ export const categoryRoutes = app
                 ...createServerErrorResponse('查询分类面包屑数据失败'),
             },
         }),
-        validator('param', categoryBreadcrumbRequestParamsSchema, defaultValidatorErrorHandler),
+        zValidator('param', categoryBreadcrumbRequestParamsSchema, defaultValidatorErrorHandler),
         async (c) => {
             try {
                 const { latest } = c.req.valid('param');

@@ -4,15 +4,13 @@ import { isNil } from 'lodash';
 import { Tag } from 'lucide-react';
 
 import { tagApi } from '@/api/tag';
-import { getServerBaseUrl } from '@/libs/server-url';
 
 import { SidebarWidget } from '../widget';
 import { TagListComponent } from './list';
 
 export const TagListWidget: FC<{ actived?: string }> = async ({ actived }) => {
-    const baseUrl = await getServerBaseUrl();
-    const result = await tagApi.list(baseUrl);
-    if (!result.ok) throw new Error(((await result.json()) as { message: string }).message);
+    const result = await tagApi.list();
+    if (!result.ok) throw new Error((await result.json()).message);
     const tags = await result.json();
     let activeId;
     if (!isNil(actived)) {
@@ -30,7 +28,7 @@ export const TagListWidget: FC<{ actived?: string }> = async ({ actived }) => {
                 </>
             }
         >
-            <TagListComponent items={tags} actived={activeId} />
+            <TagListComponent items={tags} actived={activeId}></TagListComponent>
         </SidebarWidget>
     );
 };

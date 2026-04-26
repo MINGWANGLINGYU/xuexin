@@ -7,7 +7,7 @@ import { useCallback, useRef, useState } from 'react';
 
 import type { CategoryList } from '@/server/category/type';
 
-import { Button } from '../../shadcn/ui/button';
+import { Button } from '@/app/_components/shadcn/ui/button';
 import {
     Command,
     CommandEmpty,
@@ -15,10 +15,9 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from '../../shadcn/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '../../shadcn/ui/popover';
-import { cn } from '../../shadcn/utils';
-
+} from '@/app/_components/shadcn/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/app/_components/shadcn/ui/popover';
+import { cn } from '@/app/_components/shadcn/utils';
 interface CategorySelectProps {
     categories: CategoryList;
     setValue: (value: string) => void;
@@ -29,6 +28,9 @@ export const CategorySelect: FC<CategorySelectProps> = (props) => {
     const { categories, value, setValue } = props;
     const [open, setOpen] = useState(false);
     const triggerContainerRef = useRef<HTMLDivElement | null>(null);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const popoverContentRef = useRef<HTMLDivElement | null>(null);
+
     const [popoverWidth, setPopoverWidth] = useState<number>(0);
     const handleOpenChange = useCallback((open: boolean) => {
         if (open && triggerContainerRef.current) {
@@ -44,7 +46,7 @@ export const CategorySelect: FC<CategorySelectProps> = (props) => {
                 className="relative flex items-center rounded-md border bg-transparent"
                 ref={triggerContainerRef}
             >
-                <PopoverTrigger asChild>
+                <PopoverTrigger asChild ref={triggerRef}>
                     <Button
                         variant="outline"
                         role="combobox"
@@ -57,10 +59,11 @@ export const CategorySelect: FC<CategorySelectProps> = (props) => {
                 </PopoverTrigger>
             </div>
             <PopoverContent
+                ref={popoverContentRef}
                 side="bottom"
                 align="start"
                 forceMount
-                className={cn('relative p-0')}
+                className={cn(`p-0 relative`)}
                 style={{
                     width: `${popoverWidth}px`,
                     minWidth: `${popoverWidth}px`,

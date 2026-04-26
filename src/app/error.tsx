@@ -7,7 +7,7 @@ import $styles from '@/app/(pages)/layout.module.css';
 import type { ErrorBoundaryProps } from './_components/errors/boundary';
 
 import { ErrorBoundary } from './_components/errors/boundary';
-import { Header } from './_components/header';
+import { Header } from './_components/layout/header';
 import Theme from './_components/theme';
 const AppError: FC<ErrorBoundaryProps> = (props) => (
     <Theme>

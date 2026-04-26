@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks-extra/prefer-use-state-lazy-initialization */
 'use client';
 
 import type { ChangeEventHandler, MouseEventHandler } from 'react';
@@ -34,6 +35,9 @@ import { CategorySelect } from './category-select';
 import { usePostActionForm, usePostFormSubmitHandler } from './hooks';
 import { TagInput } from './tag';
 export const PostActionForm = forwardRef<PostActionFormRef, PostActionFormProps>((props, ref) => {
+    /**
+     * 表单处理
+     */
     const form = usePostActionForm(
         props.type === 'create' ? { type: props.type } : { type: props.type, item: props.item },
     );
@@ -42,10 +46,34 @@ export const PostActionForm = forwardRef<PostActionFormRef, PostActionFormProps>
         props.type === 'create' ? { type: 'create' } : { type: 'update', id: props.item.id },
     );
 
+    useEffect(() => {
+        if (!isNil(props.setPedding)) props.setPedding(form.formState.isSubmitting);
+    }, [form.formState.isSubmitting]);
+
+    useImperativeHandle(
+        ref,
+        () => ({
+            save: form.handleSubmit(submitHandler),
+        }),
+        [props.type],
+    );
+
+    /**
+     * 文章内容
+     */
     const [body, setBody] = useState<string | undefined>(
         props.type === 'create' ? '' : props.item.body,
     );
+
+    useEffect(() => {
+        if (!isNil(body)) form.setValue('body', body);
+    }, [body]);
+
+    /**
+     * 文章slug
+     */
     const [slug, setSlug] = useState(props.type === 'create' ? '' : props.item.slug || '');
+
     const changeSlug: ChangeEventHandler<HTMLInputElement> = useCallback(
         (e) => setSlug(e.target.value),
         [],
@@ -61,16 +89,16 @@ export const PostActionForm = forwardRef<PostActionFormRef, PostActionFormProps>
         },
         [form.formState.isSubmitting],
     );
+
     useEffect(() => {
         form.setValue('slug', slug);
     }, [slug]);
 
-    useEffect(() => {
-        if (!isNil(body)) form.setValue('body', body);
-    }, [body]);
-
+    /**
+     * 文章分类
+     */
     const [allCategories, setAllCategories] = useState<CategoryItem[]>([]);
-    const [categoryId, setCategoryId] = useState<string>(() =>
+    const [categoryId, setCategoryId] = useState<string>(
         props.type === 'create' || isNil(props.item.category) ? '' : props.item.category.id,
     );
     useEffect(() => {
@@ -82,15 +110,18 @@ export const PostActionForm = forwardRef<PostActionFormRef, PostActionFormProps>
             if (!result.ok) {
                 toast.warning('读取分类列表失败,请刷新', {
                     id: 'category-list-error',
-                    description: ((await result.json()) as { message: string }).message,
+                    description: (await result.json()).message,
                 });
             } else {
                 const data = await result.json();
-                setAllCategories(data as CategoryItem[]);
+                setAllCategories(data);
             }
         })();
     }, []);
 
+    /**
+     * 文章标签
+     */
     const [allTags, setAllTags] = useState<TagItem[]>([]);
     const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
     const [tags, setTags] = useState<TagItem[]>(props.type === 'create' ? [] : props.item.tags);
@@ -101,11 +132,11 @@ export const PostActionForm = forwardRef<PostActionFormRef, PostActionFormProps>
             if (!result.ok) {
                 toast.warning('读取标签列表失败,请刷新', {
                     id: 'tag-list-error',
-                    description: ((await result.json()) as { message: string }).message,
+                    description: (await result.json()).message,
                 });
             } else {
                 const data = await result.json();
-                setAllTags(data as TagItem[]);
+                setAllTags(data);
             }
         })();
     }, []);
@@ -113,18 +144,6 @@ export const PostActionForm = forwardRef<PostActionFormRef, PostActionFormProps>
     useDeepCompareEffect(() => {
         form.setValue('tags', tags);
     }, [tags]);
-
-    useEffect(() => {
-        if (!isNil(props.setPedding)) props.setPedding(form.formState.isSubmitting);
-    }, [form.formState.isSubmitting]);
-
-    useImperativeHandle(
-        ref,
-        () => ({
-            save: form.handleSubmit(submitHandler),
-        }),
-        [props.type],
-    );
 
     return (
         <Form {...form}>
@@ -137,7 +156,7 @@ export const PostActionForm = forwardRef<PostActionFormRef, PostActionFormProps>
                     name="title"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>文章标题</FormLabel>
+                            <FormLabel>文章标题 (*)</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
@@ -296,7 +315,7 @@ export const PostActionForm = forwardRef<PostActionFormRef, PostActionFormProps>
                     name="body"
                     render={({ field: _ }) => (
                         <FormItem className="flex flex-auto flex-col">
-                            <FormLabel className="mb-3">文章内容</FormLabel>
+                            <FormLabel className="mb-3">文章内容 (*)</FormLabel>
                             <FormControl>
                                 <div className="flex flex-auto">
                                     <MdxEditor

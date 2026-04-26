@@ -1,6 +1,4 @@
 'use client';
-import type { Resolver } from 'react-hook-form';
-import type { DeepNonNullable } from 'utility-types';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNil, trim } from 'lodash';
@@ -26,6 +24,9 @@ import type { PostFormData } from './types';
  */
 export const isSlugUniqueForFrontend = (id?: string) => async (val?: string | null) => {
     if (isNil(val) || !val.length) return true;
+    // const result = await fetchApi(async (c) =>
+    //     c.api.posts.byslug[':slug'].$get({ param: { slug: val } }),
+    // );
     const result = await postApi.detailBySlug(val);
     if (!result.ok) return false;
     const post = (await result.json()) as any;
@@ -39,11 +40,11 @@ export const isSlugUniqueForFrontend = (id?: string) => async (val?: string | nu
  * @param params
  */
 export const usePostActionForm = (
-    params: { type: 'create' } | { type: 'update'; item: DateToString<PostItem> },
+    params: { type: 'create' } | { type: 'update'; item: PostItem },
 ) => {
     // 定义默认数据
     const defaultValues = useMemo(() => {
-        const values = getDefaultFormValues<DateToString<PostItem>, PostFormData>(
+        const values = getDefaultFormValues<PostItem, PostFormData>(
             ['title', 'body', 'summary', 'slug', 'keywords', 'description'],
             params,
         );
@@ -52,16 +53,17 @@ export const usePostActionForm = (
             params.type === 'update' && !isNil(params.item.category) ? params.item.category.id : '';
         return values;
     }, [params.type]);
-    return useForm<DeepNonNullable<PostFormData>, any, DeepNonNullable<PostFormData>>({
+    return useForm<PostFormData>({
         mode: 'all',
         resolver: zodResolver(
             getPostItemRequestSchema(
                 isSlugUniqueForFrontend(params.type === 'update' ? params.item.id : undefined),
             ),
-        ) as Resolver<DeepNonNullable<PostFormData>, any, DeepNonNullable<PostFormData>>,
+        ),
         defaultValues,
     });
 };
+
 /**
  * 生成表单submit(提交)函数用于操作数据的钩子
  * @param params
@@ -85,18 +87,14 @@ export const usePostFormSubmitHandler = (
                 // 更新文章
                 if (params.type === 'update') {
                     const res = await postApi.update(params.id, data);
-                    if (!res.ok) {
-                        throw new Error(((await res.json()) as { message: string }).message);
-                    }
-                    post = (await res.json()) as DateToString<PostItem>;
+                    if (!res.ok) throw new Error((await res.json()).message);
+                    post = await res.json();
                 }
                 // 创建文章
                 else {
                     const res = await postApi.create(data);
-                    if (!res.ok) {
-                        throw new Error(((await res.json()) as { message: string }).message);
-                    }
-                    post = (await res.json()) as DateToString<PostItem>;
+                    if (!res.ok) throw new Error((await res.json()).message);
+                    post = await res.json();
                 }
                 // 创建或更新文章后跳转到文章详情页
                 // 注意,这里不要用push,防止在详情页后退后返回到创建或编辑页面的弹出框

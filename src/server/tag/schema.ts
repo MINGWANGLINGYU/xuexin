@@ -1,7 +1,7 @@
 import z from 'zod';
 
 /**
- * 标签详情查询请求数据结构
+ * 文章详情查询请求数据结构
  */
 export const tagItemRequestParamsSchema = z.object({
     item: z.string().meta({ description: '标签ID' }),

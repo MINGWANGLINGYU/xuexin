@@ -5,7 +5,6 @@ import type { CategoryItem } from '@/server/category/type';
 import { CategoryTreeWidget } from './category-tree';
 import $styles from './style.module.css';
 import { TagListWidget } from './tag-list';
-
 export const Sidebar: FC<{ activedCategories: false | CategoryItem[]; activedTag?: string }> = ({
     activedCategories,
     activedTag,

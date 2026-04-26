@@ -8,12 +8,11 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { postApi } from '@/api/post';
-import { MdxRender } from '@/app/_components/mdx/render';
-import { getServerBaseUrl } from '@/libs/server-url';
 import { formatTime } from '@/libs/time';
 
 import type { IBlogBreadcrumbItem } from '../breadcrumb';
 
+import { MdxRender } from '../../mdx/render';
 import { cn } from '../../shadcn/utils';
 import { BlogBreadCrumb } from '../breadcrumb';
 import { PostEditButton } from '../list/actions/edit-button';
@@ -22,11 +21,9 @@ import { getBreadcrumbsLinks } from '../utils';
 import $styles from './style.module.css';
 
 export const PostItemIndex: FC<{ item: string }> = async ({ item }) => {
-    const baseUrl = await getServerBaseUrl();
-    const result = await postApi.detail(item, baseUrl);
+    const result = await postApi.detail(item);
     if (!result.ok) {
-        if (result.status !== 404)
-            throw new Error(((await result.json()) as { message: string }).message);
+        if (result.status !== 404) throw new Error((await result.json()).message);
         return notFound();
     }
     const post = await result.json();
@@ -39,8 +36,8 @@ export const PostItemIndex: FC<{ item: string }> = async ({ item }) => {
     return (
         <div className="page-item">
             <Suspense fallback={<PostItemSkeleton />}>
-                <div className={cn('page-container py-3', $styles.breadcrumbs)}>
-                    <BlogBreadCrumb items={breadcrumbs} basePath="" />
+                <div className={cn($styles.breadcrumbs, 'page-container')}>
+                    <BlogBreadCrumb items={breadcrumbs} basePath="/blog" />
                 </div>
                 <div className={cn('page-container', $styles.item)}>
                     <div className={$styles.thumb}>
@@ -66,28 +63,27 @@ export const PostItemIndex: FC<{ item: string }> = async ({ item }) => {
                                         </div>
                                     </header>
                                     <div className={$styles.meta}>
-                                        <div>
+                                        <div className={$styles.info}>
                                             <span>
-                                                <Calendar />
+                                                <Calendar className="mr-2" />
+                                                <time className="ellips mt-1">
+                                                    {formatTime(
+                                                        !isNil(post.updatedAt)
+                                                            ? post.updatedAt
+                                                            : post.createdAt,
+                                                    )}
+                                                </time>
                                             </span>
-                                            <time className="ellips">
-                                                {formatTime(
-                                                    !isNil(post.updatedAt)
-                                                        ? post.updatedAt
-                                                        : post.createdAt,
-                                                )}
-                                            </time>
                                         </div>
                                         {post.tags.length > 0 && (
-                                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                                                <span className="mr-1">
-                                                    <Tag className="h-3 w-3" />
+                                            <div className={$styles.tags}>
+                                                <span className="mr-2">
+                                                    <Tag />
                                                 </span>
                                                 {post.tags.map((tag) => (
                                                     <Link
                                                         key={tag.id}
-                                                        href={`/?tag=${encodeURIComponent(tag.text)}`}
-                                                        className="rounded-sm border px-2 py-0.5"
+                                                        href={`/blog?tag=${tag.text}`}
                                                     >
                                                         {tag.text}
                                                     </Link>

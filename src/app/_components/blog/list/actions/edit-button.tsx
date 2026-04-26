@@ -9,23 +9,23 @@ import { Suspense } from 'react';
 
 import type { PostItem } from '@/server/post/type';
 
-import { useUrlQuery } from '@/libs/url';
-
-import { Button as CNButton } from '../../../shadcn/ui/button';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '../../../shadcn/ui/tooltip';
-import { cn } from '../../../shadcn/utils';
+} from '@/app/_components/shadcn/ui/tooltip';
+import { cn } from '@/app/_components/shadcn/utils';
+import { useUrlQuery } from '@/libs/url';
+
+import { Button as CNButton } from '../../../shadcn/ui/button';
 
 const Button: FC<{ id: string; iconBtn?: boolean }> = ({ id, iconBtn }) => {
     const urlQuery = useUrlQuery();
     return (
         <CNButton
             asChild
-            className={cn({
+            className={cn('text-xs', {
                 'mr-3': !iconBtn,
                 'btn-icon-transparent ': iconBtn,
             })}
@@ -50,7 +50,7 @@ export const PostEditButton: FC<{ item: PostItem; iconBtn?: boolean }> = ({ item
     <Suspense>
         <TooltipProvider>
             <Tooltip>
-                <TooltipTrigger asChild>
+                <TooltipTrigger>
                     <Button id={item.id} iconBtn={iconBtn} />
                 </TooltipTrigger>
                 <TooltipContent>

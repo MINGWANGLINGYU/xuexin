@@ -65,5 +65,3 @@ export const localTime = (time: Dayjs, options?: Pick<TimeOptions, 'locale' | 't
  * @param date
  */
 export const formatTime = (date?: string) => localTime(getTime(date)).format('LLL');
-
-export const formatChineseTime = (date?: string | Date) => formatTime(date?.toString());

@@ -1,4 +1,3 @@
-// src/app/api/[[...route]]/route.ts
 import { handle } from 'hono/vercel';
 
 import { app } from '@/server/main';

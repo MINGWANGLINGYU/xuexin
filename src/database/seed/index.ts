@@ -7,7 +7,6 @@ async function truncate() {
     await prisma.category.$truncate();
     await prisma.tag.$truncate();
 }
-
 async function seed() {
     try {
         await truncate();

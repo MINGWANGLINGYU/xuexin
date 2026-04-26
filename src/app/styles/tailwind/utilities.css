@@ -25,7 +25,8 @@
 }
 
 @utility page-block {
-    @apply bg-zinc-100/80;
+    /* @apply bg-zinc-100/80; */
+    @apply bg-[color:rgb(244_244_245_/_80%)];
 
     html.dark & {
         @apply bg-zinc-800/50;

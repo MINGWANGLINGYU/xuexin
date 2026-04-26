@@ -27,7 +27,6 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/app/_components/shadcn/ui/tooltip';
-
 export const PostDelete: FC<{ item: PostItem }> = ({ item }) => {
     const router = useRouter();
     const [open, setOpen] = useState(false);
@@ -50,7 +49,7 @@ export const PostDelete: FC<{ item: PostItem }> = ({ item }) => {
             if (!result.ok) {
                 toast.warning('删除失败', {
                     id: 'post-delete-error',
-                    description: ((await result.json()) as { message: string }).message,
+                    description: (await result.json()).message,
                 });
             }
             setPedding(false);
@@ -72,7 +71,7 @@ export const PostDelete: FC<{ item: PostItem }> = ({ item }) => {
                         <TooltipTrigger asChild>
                             <Button
                                 className="text-xs"
-                                variant="ghost"
+                                variant="secondary"
                                 size="sm"
                                 onClick={openDialog}
                             >

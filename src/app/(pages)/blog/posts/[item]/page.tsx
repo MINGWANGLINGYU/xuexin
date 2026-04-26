@@ -6,8 +6,6 @@ import type { IPostMetadata } from '@/app/_components/blog/metadata';
 import { PostItemIndex } from '@/app/_components/blog/item';
 import { getPostItemMetadata } from '@/app/_components/blog/metadata';
 
-export const dynamic = 'force-dynamic';
-
 export const generateMetadata = async (
     { params }: Omit<IPostMetadata, 'parent'>,
     parent: IPostMetadata['parent'],

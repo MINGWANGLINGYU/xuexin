@@ -1,26 +1,28 @@
+'use server';
+
 import type { Category, Prisma } from '@prisma/client';
 
 import { isNil, omit } from 'lodash';
 
 import type { PaginateOptions } from '@/libs/db/types';
-import type { TagItem } from '@/server/tag/type';
 
 import db from '@/libs/db/client';
 import { paginateTransform } from '@/libs/db/utils';
 import { getRandomInt } from '@/libs/random';
 import { deepMerge } from '@/libs/utils';
 
-export type PostCreateInput = Omit<Prisma.PostCreateInput, 'thumb' | 'tags' | 'category'> & {
+import type { TagItem } from '../tag/type';
+
+type PostCreateInput = Omit<Prisma.PostCreateInput, 'thumb' | 'tags' | 'category'> & {
     tags?: TagItem[];
     categoryId?: string;
 };
-export type PostUpdateInput = Omit<Prisma.PostUpdateInput, 'thumb' | 'tags' | 'category'> & {
+type PostUpdateInput = Omit<Prisma.PostUpdateInput, 'thumb' | 'tags' | 'category'> & {
     tags?: TagItem[];
     categoryId?: string;
 };
 
 export type PostPaginateOptions = PaginateOptions & {
-    orderBy?: 'asc' | 'desc';
     /**
      * 标签
      */
@@ -51,21 +53,12 @@ const defaultPostPaginateOptions = deepMerge(defaultPostItemQueryOptions, {
     omit: { body: true },
 });
 
-const withCategories = async <T extends { category?: Category | null }>(item: T) => ({
-    ...item,
-    categories: !isNil(item.category?.id)
-        ? await db.category.getAncestorsWithCurrent({
-              where: { id: item.category.id },
-          })
-        : [],
-});
-
 /**
  * 查询分页文章列表信息
  * @param options
  */
 export const queryPostPaginate = async (options: PostPaginateOptions = {}) => {
-    const { tag, category, orderBy, ...rest } = options;
+    const { tag, category, ...rest } = options;
     const where: Prisma.PostWhereInput = {};
     if (!isNil(tag)) {
         where.tags = {
@@ -81,7 +74,7 @@ export const queryPostPaginate = async (options: PostPaginateOptions = {}) => {
         where.categoryId = { in: categories.map((item) => item.id) };
     }
     const data = await db.post.paginate({
-        orderBy: [{ updatedAt: orderBy ?? 'desc' }, { createdAt: orderBy ?? 'desc' }],
+        orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
         page: 1,
         limit: 8,
         where,
@@ -89,17 +82,28 @@ export const queryPostPaginate = async (options: PostPaginateOptions = {}) => {
         ...rest,
     });
     for (let index = 0; index < data.result.length; index++) {
-        data.result[index] = (await withCategories(data.result[index] as any)) as any;
+        (data.result[index] as (typeof data.result extends (infer ItemType)[]
+            ? ItemType
+            : never) & {
+            categories: Category[];
+        }) = {
+            ...data.result[index],
+            categories: !isNil(data.result[index].category?.id)
+                ? await db.category.getAncestorsWithCurrent({
+                      where: { id: data.result[index].category?.id },
+                  })
+                : [],
+        };
     }
     return paginateTransform(data);
 };
 
 /**
  * 根据查询条件获取文章总页数
- * @param options
+ * @param limit
  */
 export const queryPostTotalPages = async (
-    options: Omit<PostPaginateOptions, 'page'> = {},
+    options: Omit<PaginateOptions, 'page'> = {},
 ): Promise<number> => {
     const data = await queryPostPaginate({ page: 1, ...options });
     return data.meta.totalPages ?? 0;
@@ -121,7 +125,16 @@ export const queryPostItem = async (arg: string) => {
         },
         ...defaultPostItemQueryOptions,
     });
-    if (!isNil(item)) return withCategories(item);
+    if (!isNil(item)) {
+        return {
+            ...item,
+            categories: !isNil(item.category?.id)
+                ? await db.category.getAncestorsWithCurrent({
+                      where: { id: item.category?.id },
+                  })
+                : [],
+        };
+    }
     return item;
 };
 
@@ -134,7 +147,16 @@ export const queryPostItemBySlug = async (slug: string) => {
         where: { slug },
         ...defaultPostItemQueryOptions,
     });
-    if (!isNil(item)) return withCategories(item);
+    if (!isNil(item)) {
+        return {
+            ...item,
+            categories: !isNil(item.category?.id)
+                ? await db.category.getAncestorsWithCurrent({
+                      where: { id: item.category?.id },
+                  })
+                : [],
+        };
+    }
     return item;
 };
 
@@ -147,7 +169,16 @@ export const queryPostItemById = async (id: string) => {
         where: { id },
         ...defaultPostItemQueryOptions,
     });
-    if (!isNil(item)) return withCategories(item);
+    if (!isNil(item)) {
+        return {
+            ...item,
+            categories: !isNil(item.category?.id)
+                ? await db.category.getAncestorsWithCurrent({
+                      where: { id: item.category?.id },
+                  })
+                : [],
+        };
+    }
     return item;
 };
 
@@ -163,7 +194,7 @@ export const createPostItem = async (data: PostCreateInput) => {
     if (!isNil(data.tags)) {
         createData.tags = {
             connectOrCreate: data.tags.map(({ id, text }) => ({
-                where: { text: text ?? id },
+                where: { id },
                 create: { text },
             })),
         };
@@ -189,9 +220,9 @@ export const updatePostItem = async (id: string, data: PostUpdateInput) => {
     const updateData: Prisma.PostUpdateInput = { ...omit(data, ['tags', 'categoryId']) };
     if (!isNil(data.tags)) {
         updateData.tags = {
-            set: [],
+            set: [], // 先清除所有现有关联
             connectOrCreate: data.tags.map(({ id, text }) => ({
-                where: { text: text ?? id },
+                where: { id },
                 create: { text },
             })),
         };

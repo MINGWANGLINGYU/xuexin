@@ -2,10 +2,10 @@ import type { FC } from 'react';
 
 import type { TagItem } from '@/server/tag/type';
 
-import { cn } from '../../../../shadcn/utils';
+import { cn } from '@/app/_components/shadcn/utils';
+
 import { TagLink } from '../../../form/tag';
 import $styles from './list.module.css';
-
 export const TagListComponent: FC<{ items: TagItem[]; actived?: string }> = ({
     items,
     actived,

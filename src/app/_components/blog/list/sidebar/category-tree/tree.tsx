@@ -13,8 +13,9 @@ import {
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-} from '../../../../shadcn/ui/accordion';
-import { cn } from '../../../../shadcn/utils';
+} from '@/app/_components/shadcn/ui/accordion';
+import { cn } from '@/app/_components/shadcn/utils';
+
 import $styles from './tree.module.css';
 
 interface CategoryItemProps {
@@ -34,6 +35,7 @@ const Item: FC<CategoryItemProps> = ({ category, actives, parentPath }) => {
         [parentPath, category.slug, category.id],
     );
 
+    // 滚动到视图
     useEffect(() => {
         if (isActive && itemRef.current) {
             itemRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -49,7 +51,10 @@ const Item: FC<CategoryItemProps> = ({ category, actives, parentPath }) => {
                         style={{ paddingLeft: `${0.5 * (category.depth - 1)}rem` }}
                     >
                         <FolderIcon className="mr-2 h-4 w-4" />
-                        <AccordionTrigger className="flex flex-1 py-0 font-medium hover:no-underline">
+                        <AccordionTrigger
+                            className="flex flex-1 py-0 font-medium hover:no-underline"
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <Link
                                 className="ellips animate-decoration animate-decoration-sm mr-2"
                                 href={currentPath}
@@ -82,7 +87,9 @@ const Item: FC<CategoryItemProps> = ({ category, actives, parentPath }) => {
                 style={{ paddingLeft: `${0.5 * (category.depth - 1)}rem` }}
             >
                 <FileIcon className="mr-2 h-4 w-4" />
+                {/* <span className="font-medium">{category.name}</span> */}
                 <Link
+                    key={category.id}
                     href={currentPath}
                     className="ellips animate-decoration animate-decoration-sm"
                 >
@@ -97,11 +104,17 @@ export const CategoryTreeComponent: FC<{ categories: CategoryTree; actives: stri
     categories,
     actives,
 }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
     return (
-        <div className={cn($styles.container)}>
+        <div ref={containerRef} className={cn($styles.container)}>
             <Accordion type="multiple" className={$styles.accordion} defaultValue={actives}>
                 {categories.map((category) => (
-                    <Item key={category.id} category={category} actives={actives} parentPath="" />
+                    <Item
+                        key={category.id}
+                        category={category}
+                        actives={actives}
+                        parentPath="/blog"
+                    />
                 ))}
             </Accordion>
         </div>
