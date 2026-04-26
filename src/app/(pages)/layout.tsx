@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { FC, PropsWithChildren, ReactNode } from 'react';
 
+import { Auth } from '../_components/auth';
 import { Footer } from '../_components/layout/footer';
 import { Header } from '../_components/layout/header';
 import { Toaster } from '../_components/shadcn/ui/sonner';
@@ -14,13 +15,15 @@ export const metadata: Metadata = {
 
 const AppLayout: FC<PropsWithChildren<{ modal: ReactNode }>> = ({ children, modal }) => (
     <Theme>
-        <div className={$styles.layout}>
-            <Header />
-            {children}
-            <Footer />
-        </div>
-        {modal}
-        <Toaster />
+        <Auth>
+            <div className={$styles.layout}>
+                <Header />
+                {children}
+                <Footer />
+            </div>
+            {modal}
+            <Toaster />
+        </Auth>
     </Theme>
 );
 export default AppLayout;

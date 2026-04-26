@@ -1,5 +1,6 @@
 import type { z } from 'zod';
 
+import type { postRoutes } from './routes';
 import type {
     getPostItemRequestSchema,
     postPageNumbersRequestQuerySchema,
@@ -36,3 +37,5 @@ export type PostPageNumbers = z.infer<typeof postPageNumbersSchema>;
  * 文章操作(建或更新文章)时的请求数据类型
  */
 export type PostCreateOrUpdateData = z.infer<ReturnType<typeof getPostItemRequestSchema>>;
+
+export type PostApiType = typeof postRoutes;

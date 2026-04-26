@@ -32,7 +32,7 @@
     @apply flex w-full p-2;
 
     & > ul {
-        @apply flex w-full;
+        @apply flex w-full flex-col flex;
 
         & > li {
             @apply flex w-full items-center h-9 py-1 px-3 mt-2;

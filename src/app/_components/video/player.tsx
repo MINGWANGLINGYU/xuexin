@@ -1,5 +1,5 @@
 'use client';
-import type Option from 'artplayer/types/option';
+import type { Option } from 'artplayer';
 import type { FC } from 'react';
 
 import Artplayer from 'artplayer';
@@ -9,7 +9,7 @@ import React, { useEffect, useRef } from 'react';
 
 import $styles from './player.module.css';
 
-export const Player: FC<{
+const Player: FC<{
     option: Omit<Option, 'container'>;
     getInstance?: any;
     className?: string;
@@ -61,3 +61,4 @@ export const Player: FC<{
     }, [artRef.current, option.poster]);
     return <div className={clsx($styles.container, className)} ref={artRef} {...rest} />;
 };
+export default Player;

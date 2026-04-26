@@ -1,7 +1,7 @@
-import type { TagApiType } from '@/server/tag/routes';
+import type { TagApiType } from '@/server/tag/type';
 
 import { buildClient, fetchApi } from '@/libs/hono';
-import { tagPath } from '@/server/tag/routes';
+import { tagPath } from '@/server/tag/constants';
 
 export const tagClient = buildClient<TagApiType>(tagPath);
 export const tagApi = {

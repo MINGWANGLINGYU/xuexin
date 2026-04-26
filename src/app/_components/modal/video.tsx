@@ -1,9 +1,10 @@
 'use client';
-import type VideoOption from 'artplayer/types/option';
+import type { Option as VideoOption } from 'artplayer';
 import type { FC } from 'react';
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import CloseIcon from '@ricons/material/CloseFilled';
+import dynamic from 'next/dynamic';
 import { useCallback } from 'react';
 
 import { deepMerge } from '@/libs/utils';
@@ -17,7 +18,6 @@ import {
     DialogTitle,
 } from '../shadcn/ui/dialog';
 import { cn } from '../shadcn/utils';
-import { Player } from '../video/player';
 import $styles from './video.module.css';
 interface Props {
     className?: string;
@@ -25,6 +25,8 @@ interface Props {
     open: boolean;
     setOpen: (open: boolean) => void;
 }
+
+const Player = dynamic(() => import('../video/player'), { ssr: false });
 
 export const VideoModal: FC<Props> = ({ className, video, open, setOpen }) => {
     const videoOption = deepMerge(video, { autoplay: false, muted: false }, 'replace');

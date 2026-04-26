@@ -5,7 +5,6 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import perfectionist from 'eslint-plugin-perfectionist';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 // import tailwind from 'eslint-plugin-tailwindcss';
-import unusedImports from 'eslint-plugin-unused-imports';
 
 export default antfu(
     {
@@ -86,9 +85,6 @@ export default antfu(
         },
     },
     {
-        plugins: {
-            'unused-imports': unusedImports,
-        },
         rules: {
             'unused-imports/no-unused-imports': 'error',
             'unused-imports/no-unused-vars': [

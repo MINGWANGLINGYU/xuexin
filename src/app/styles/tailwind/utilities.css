@@ -1,3 +1,5 @@
+/* stylelint-disable nesting-selector-no-missing-scoping-root */
+
 /********************************************************* 自定义tailwind工具类 *********************************************************/
 @utility page-item {
     @apply flex flex-auto flex-col mt-20 items-center;

@@ -1,6 +1,6 @@
 import type { ZodType } from 'zod';
 
-import { resolver } from 'hono-openapi/zod';
+import { resolver } from 'hono-openapi';
 
 import { errorSchema } from './schema';
 
@@ -74,4 +74,12 @@ export const createServerErrorResponse = (description?: string) => {
  */
 export const createNotFoundErrorResponse = (description?: string) => {
     return createErrorResponse(description ?? '数据不存在', 404);
+};
+
+/**
+ * 创建用户未认证响应信息
+ * @param description
+ */
+export const createUnauthorizedErrorResponse = (description?: string) => {
+    return createErrorResponse(description ?? '用户未认证', 401);
 };
